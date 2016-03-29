@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
+<script:module xmlns:script="http://openoffice.org/2000/script" script:name="RemoveDuplicates" script:language="StarBasic">REM  *****  BASIC  *****
+
+REM 对话框
+Dim oDialog1 AS Object
+REM 第一次打开选中的区域，用于扩展后，点取消按钮恢复
+Dim sourceAddress
+Dim oDoc
+Dim oController
+Dim oSheet
+
+Sub RemoveDuplicates
+	oDoc = ThisComponent
+	oController = oDoc.getCurrentController
+	oSheet = oController.activeSheet
+	oSel = oDoc.getCurrentSelection()
+	
+	InitLanguage
+	
+	REM 检测多重选择区域
+	If not oSel.supportsService(&quot;com.sun.star.sheet.SheetCellRange&quot;) then
+		MsgBox getText(0)
+		Exit sub
+	End If
+	
+	
+	sourceAddress = oSel.getRangeAddress	
+	REM 检测选择单个选择，并自动扩展
+	If oSel.supportsService(&quot;com.sun.star.sheet.SheetCell&quot;) then
+		ExtendSingleSelection(oSel)
+		oSel = oDoc.getCurrentSelection()
+	End If
+	
+	If oSel.supportsService(&quot;com.sun.star.sheet.SheetCell&quot;) then
+		MsgBox getText(1)
+		Exit Sub
+	End If
+		
+	DialogLibraries.LoadLibrary(&quot;RemoveDuplicates&quot;)
+    oDialog1 = CreateUnoDialog( DialogLibraries.RemoveDuplicates.Options )
+    UpdateDialogUI
+    UpdateListBoxItems(True)
+    If oDialog1.Execute() = 0 Then
+    	oRange = oSheet.getCellRangeByPosition(sourceAddress.StartColumn, sourceAddress.StartRow, sourceAddress.EndColumn, sourceAddress.EndRow)
+		oController.select(oRange)
+	Else
+		DoRemove
+    End If
+End Sub
+
+Sub UpdateDialogUI
+	oDialog1.GetControl(&quot;OptionHint&quot;).Text = getText(5)
+	oDialog1.GetControl(&quot;btnSelectAll&quot;).Label = getText(3)
+	oDialog1.GetControl(&quot;cbTitle&quot;).Label = getText(4)
+	oDialog1.GetControl(&quot;btnOK&quot;).Label = getText(6)
+	oDialog1.GetControl(&quot;btnCancel&quot;).Label = getText(7)
+End Sub
+
+Sub UpdateListBoxItems (hasTitle As Boolean)
+	oSel = oDoc.getCurrentSelection()
+	lbList = oDialog1.GetControl(&quot;lbList&quot;)
+	lbList.removeItems(0, lbList.getItemCount())
+	If hasTitle Then
+		aDataArray = oSel.getDataArray
+		lColumns = ubound(aDataArray(0))
+		For lColumn = 0 to lColumns
+			lbList.addItem(aDataArray(0)(lColumn), lColumn)
+		Next lColumn
+	Else
+		oAddress = oSel.getRangeAddress
+		columns = oSheet.Columns
+		For i = oAddress.StartColumn to oAddress.EndColumn
+			lbList.addItem(getText(2) + columns.getByIndex(i).Name, i - oAddress.StartColumn)
+		Next i
+	End If
+	btnSelectAllClick	
+End Sub
+
+REM 统计选中区域有单元格
+Function GetCount (aDataArray) As Integer
+  	lRows = ubound(aDataArray) + 1
+	lCols = ubound(aDataArray(0)) + 1
+	GetCount = lRows * lCols
+End Function
+
+REM 检测单元格是否有数据
+Function HasData(column, row) As Boolean
+	Cell = oSheet.getCellByPosition(column, row)
+	HasData = Cell.Type &lt;&gt; com.sun.star.table.CellContentType.EMPTY
+End Function
+
+REM 扩展选中区域
+Sub ExtendSingleSelection(oSel)
+	oAddress = oSel.getRangeAddress
+10:
+	mLeft = oAddress.StartColumn
+	mTop = oAddress.StartRow
+	mRight = oAddress.EndColumn
+	mBottom = oAddress.EndRow
+	
+	REM 检测四个角
+	If mLeft &gt; 0 then
+		REM 左上角
+		If mTop &gt; 0 then
+			If HasData(mLeft - 1, mTop - 1) then
+				oAddress.StartColumn = mLeft - 1
+				oAddress.StartRow = mTop - 1
+				Goto 10
+			End If
+		End If
+		REM 左下角
+		If mBottom &lt; 1048575 then
+			If HasData(mLeft - 1, mBottom + 1) then
+				oAddress.StartColumn = mLeft - 1
+				oAddress.EndRow = mBottom + 1
+				Goto 10
+			End If
+		End If
+	End If
+	If mRight &lt; 1024 then
+		REM 右上角
+		If mTop &gt; 0 then
+			If HasData(mRight + 1, mTop -1) then
+				oAddress.EndColumn = mRight + 1
+				oAddress.StartRow = mTop - 1
+				Goto 10
+			End If
+		End If
+		REM 右下角
+		If mBottom &lt; 1048575 then
+			If HasData(mRight + 1, mBottom + 1) then
+				oAddress.EndColumn = mRight + 1
+				oAddress.EndRow = mBottom + 1
+				Goto 10
+			End If
+		End If
+	End If
+	REM 上下左右
+	If mTop &gt; 0 Then
+		For I = mLeft To mRight 
+			If HasData(I, mTop - 1) Then
+				oAddress.StartRow = mTop - 1
+				Goto 10
+			End If
+		Next I
+	End If
+	If mBottom &lt; 1048575 Then
+		For I = mLeft To mRight
+			If HasData(I, mBottom + 1) Then
+				oAddress.EndRow = mBottom + 1
+				Goto 10
+			End If
+		Next I
+	End If
+	If mLeft &gt; 0 Then
+		For I = mTop To mBottom
+			If HasData(mLeft - 1, I) Then
+				oAddress.StartColumn = mLeft - 1
+				Goto 10
+			End If
+		Next I
+	End If
+	If mRight &lt; 1024 Then
+		For I = mTop To mBottom
+			If HasData(mRight + 1, I) Then
+				oAddress.StartColumn = mRight + 1
+				Goto 10
+			End If
+		Next I
+	End If
+	
+	
+	&apos; oConv = ThisComponent.createInstance(&quot;com.sun.star.table.CellRangeAddressConversion&quot;)
+	&apos; oConv.Address = oAddress
+	&apos; msgbox(oConv.UserInterfaceRepresentation)
+	&apos; oRange = oSheet.getCellRangeByname(oConv.UserInterfaceRepresentation)
+	oRange = oSheet.getCellRangeByPosition(oAddress.StartColumn, oAddress.StartRow, oAddress.EndColumn, oAddress.EndRow)
+	oController.select(oRange)
+End Sub
+
+REM 检测当前行是否在唯一列表中
+Function CheckInArray(checkArr, UnionArray)
+	CheckInArray = True
+	totalCount = ubound(UnionArray)
+	selCount = ubound(checkArr)
+	For I = 1 to totalCount
+		B = True
+		For J = 0 to selCount
+			If UnionArray(I, J) &lt;&gt; checkArr(J) Then
+				B = False
+				Exit For
+			End If
+		Next J
+		If B Then
+			Exit Function
+		End If	
+	Next I
+	CheckInArray = False
+End Function
+
+REM 添加当前行到唯一列表中
+Sub ArrayPush(UnionArray, checkArr)
+	totalCount = ubound(UnionArray)
+	selCount = ubound(checkArr)
+	ReDim Preserve UnionArray(totalCount + 1, selCount)
+	totalCount = totalCount + 1
+	
+	For I = 0 to selCount
+		UnionArray(totalCount, I) = checkArr(I)
+	Next I
+End Sub
+
+REM 删除指定区域的单元格
+Sub RemoveCells(Sheet, StartColumn, StartRow, EndColumn, EndRow)
+	Dim CellRangeAddress As New com.sun.star.table.CellRangeAddress
+	CellRangeAddress.Sheet = Sheet
+	CellRangeAddress.StartColumn = StartColumn
+	CellRangeAddress.EndColumn = EndColumn
+	CellRangeAddress.StartRow = StartRow
+	CellRangeAddress.EndRow = EndRow
+	oSheet.removeRange(CellRangeAddress, com.sun.star.sheet.CellDeleteMode.UP)	
+End Sub
+
+Sub doRemove
+	oSel = oDoc.getCurrentSelection()
+	oAddress = oSel.getRangeAddress
+	aDataArray = oSel.getDataArray()
+	lRows = ubound(aDataArray)
+	lCols = ubound(aDataArray(0))
+	Dim UnionArray(0,0) As String
+	
+	lbList = oDialog1.GetControl(&quot;lbList&quot;)
+	cbTitle = oDialog1.GetControl(&quot;cbTitle&quot;)
+	
+	Pos = 0
+	If cbTitle.getState() &gt; 0 then
+		Pos = 1
+	End If
+	selectedLst = lbList.getSelectedItemsPos
+	checkSize = ubound(selectedLst)
+	Dim checkArr(checkSize) As String
+	ReDim UnionArray(0, checkSize)
+	
+	deleteCount = 0
+	While Pos &lt;= lRows
+		For I = 0 to checkSize
+			checkArr(I) = aDataArray(Pos)(selectedLst(i))
+		Next I
+		If CheckInArray(checkArr, UnionArray) Then
+			RemoveCells(oAddress.sheet, oAddress.StartColumn, oAddress.StartRow + Pos - deleteCount, oAddress.EndColumn, oAddress.StartRow + Pos - deleteCount)  
+			deleteCount = deleteCount + 1
+		Else
+			ArrayPush(UnionArray, checkArr, Pos)
+		End If
+		Pos = Pos + 1
+	Wend
+	
+End Sub
+
+Sub btnCancelClick
+	oDialog1.endExecute()
+End Sub
+
+Sub btnOKClick
+	oDialog1.endDialog(1)
+End Sub
+
+Sub btnSelectAllClick
+	lbList = oDialog1.GetControl(&quot;lbList&quot;)
+	count = lbList.getItemCount()
+	Dim SelectItems(count) As Integer
+	For I = 0 To count - 1
+		SelectItems(I) = I
+	Next I
+	lbList.selectItemsPos(SelectItems, true)
+End Sub
+
+Sub cbIncludeTitle
+	cbTitle = oDialog1.GetControl(&quot;cbTitle&quot;)
+	If cbTitle.getState() &gt; 0 Then
+		UpdateListBoxItems(True)
+	Else
+		UpdateListBoxItems(False)
+	End If
+End Sub
+
+</script:module>

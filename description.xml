@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<description
+ xmlns="http://openoffice.org/extensions/description/2006"
+ xmlns:dep="http://openoffice.org/extensions/description/2006"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<identifier value="vnd.actom.removeduplicates"/>
+	<version value="0.9.1"/>
+	<!-- <dependencies>
+		<OpenOffice.org-minimal-version value="2.1" dep:name="OpenOffice.org 2.1"/>
+	</dependencies> -->
+	<registration>
+		<simple-license  accept-by="admin" default-license-id="ID0" suppress-on-update="true" >
+			<license-text xlink:href="registration/gpl-3.0.txt" lang="en" license-id="ID0" />
+			<license-text xlink:href="registration/gpl-3.0.txt" lang="en-US" />
+		</simple-license>
+	</registration>
+	<icon>
+        <default xlink:href="icons/image1_26.png"/>
+    </icon>
+	<publisher>
+        <name lang="en" xlink:href="https://actom.me">ACTom</name>
+    </publisher>
+	<display-name>
+      <name lang="en">RemoveDuplicates</name>
+      <name lang="zh-CN">删除重复项</name>
+   </display-name>
+  <extension-description>
+    <src xlink:href="pkg-desc/pkg-description.en" lang="en" />
+    <src xlink:href="pkg-desc/pkg-description.zh_CN" lang="zh-CN" />
+  </extension-description>
+  <release-notes>
+    <src xlink:href="pkg-desc/release-notes_en.txt" lang="en" />
+    <src xlink:href="pkg-desc/release-notes_zh_CN.txt" lang="zh-CN" />
+  </release-notes>
+</description>

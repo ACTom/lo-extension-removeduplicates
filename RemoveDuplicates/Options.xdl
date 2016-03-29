@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dlg:window PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "dialog.dtd">
+<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script" dlg:id="Options" dlg:left="135" dlg:top="55" dlg:width="182" dlg:height="144" dlg:closeable="true" dlg:moveable="true">
+ <dlg:bulletinboard>
+  <dlg:text dlg:id="OptionHint" dlg:tab-index="0" dlg:left="7" dlg:top="4" dlg:width="170" dlg:height="9" dlg:value="~Please select the duplicate columns (Press Ctrl to multiselect)"/>
+  <dlg:checkbox dlg:id="cbTitle" dlg:tab-index="1" dlg:left="115" dlg:top="113" dlg:width="63" dlg:height="7" dlg:value="~Selection includes title" dlg:checked="true">
+   <script:event script:event-name="on-performaction" script:macro-name="vnd.sun.star.script:RemoveDuplicates.RemoveDuplicates.cbIncludeTitle?language=Basic&amp;location=application" script:language="Script"/>
+  </dlg:checkbox>
+  <dlg:button dlg:id="btnSelectAll" dlg:tab-index="2" dlg:left="8" dlg:top="111" dlg:width="38" dlg:height="14" dlg:value="Select ~All">
+   <script:event script:event-name="on-performaction" script:macro-name="vnd.sun.star.script:RemoveDuplicates.RemoveDuplicates.btnSelectAllClick?language=Basic&amp;location=application" script:language="Script"/>
+  </dlg:button>
+  <dlg:button dlg:id="btnOK" dlg:tab-index="3" dlg:left="100" dlg:top="129" dlg:width="38" dlg:height="14" dlg:default="true" dlg:value="~OK">
+   <script:event script:event-name="on-performaction" script:macro-name="vnd.sun.star.script:RemoveDuplicates.RemoveDuplicates.btnOKClick?language=Basic&amp;location=application" script:language="Script"/>
+  </dlg:button>
+  <dlg:button dlg:id="btnCancel" dlg:tab-index="4" dlg:left="140" dlg:top="129" dlg:width="38" dlg:height="14" dlg:default="true" dlg:value="~Cancel">
+   <script:event script:event-name="on-performaction" script:macro-name="vnd.sun.star.script:RemoveDuplicates.RemoveDuplicates.btnCancelClick?language=Basic&amp;location=application" script:language="Script"/>
+  </dlg:button>
+  <dlg:menulist dlg:id="lbList" dlg:tab-index="5" dlg:left="7" dlg:top="18" dlg:width="172" dlg:height="87" dlg:multiselection="true"/>
+ </dlg:bulletinboard>
+</dlg:window>

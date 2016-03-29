@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
+<script:module xmlns:script="http://openoffice.org/2000/script" script:name="Locate" script:language="StarBasic">REM  *****  BASIC  *****
+
+Dim stringLists() As String
+Dim language As String
+
+Function getLanguage
+	GlobalScope.BasicLibraries.LoadLibrary(&quot;Tools&quot;)
+	getLanguage = GetStarOfficeLocale().language + &quot;_&quot; + GetStarOfficeLocale().country
+End Function
+
+Function getText(index)
+	getText = stringLists(index)
+End Function
+
+Function inArray(source, array)
+	For i = 0 to ubound(array)
+		If array(i) = source Then
+			inArray = True
+			Exit Function
+		End If
+	Next i
+	inArray = False
+End Function
+
+Sub InitLanguage
+	Dim languageList()
+	languageList() = array(&quot;en&quot;, &quot;zh_CN&quot;)
+	language = getLanguage
+	If not inArray(language, languageList) Then
+		language = &quot;en&quot;
+	End If
+	Select Case language
+		Case &quot;en&quot;
+			load_en
+		Case &quot;zh_CN&quot;
+			load_zh_CN
+	End Select
+End Sub
+
+Sub load_en
+	stringLists() = array(&quot;Do not support multiselection&quot;, _
+		&quot;Please select a range&quot;, _
+		&quot;Column &quot;, _
+		&quot;Select ~All&quot;, _
+		&quot;~Selection includes title&quot;, _
+		&quot;~Please select the duplicate columns (Press Ctrl to multiselect):&quot;, _
+		&quot;~OK&quot;, _
+		&quot;~Cancel&quot;)
+End Sub
+
+Sub load_zh_CN
+	stringLists() = array(&quot;不支持多重选择区域&quot;, _
+		&quot;请选择一个区域&quot;, _
+		&quot;列 &quot;, _
+		&quot;选择全部(~A)&quot;, _
+		&quot;选区包含了列名(~S)&quot;, _
+		&quot;请选择判断重复的列（按住Ctrl键可以多选）(~P)：&quot;, _
+		&quot;确定(~O)&quot;, _
+		&quot;取消(~C)&quot;)
+End Sub
+</script:module>
