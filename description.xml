@@ -33,5 +33,6 @@
   <release-notes>
     <src xlink:href="pkg-desc/release-notes_en.txt" lang="en" />
     <src xlink:href="pkg-desc/release-notes_zh_CN.txt" lang="zh-CN" />
+    <src xlink:href="pkg-desc/release-notes_zh_TW.txt" lang="zh-TW" />
   </release-notes>
 </description>
