@@ -26,7 +26,7 @@ End Function
 
 Sub InitLanguage
 	Dim languageList()
-	languageList() = array(&quot;en&quot;, &quot;zh_CN&quot;)
+	languageList() = array(&quot;en&quot;, &quot;zh_CN&quot;, &quot;zh_TW&quot;)
 	language = getLanguage
 	If not inArray(language, languageList) Then
 		language = &quot;en&quot;
@@ -36,6 +36,8 @@ Sub InitLanguage
 			load_en
 		Case &quot;zh_CN&quot;
 			load_zh_CN
+		Case &quot;zh_TW&quot;
+			load_zh_TW
 	End Select
 End Sub
 
@@ -56,8 +58,20 @@ Sub load_zh_CN
 		&quot;列 &quot;, _
 		&quot;选择全部(~A)&quot;, _
 		&quot;选区包含了列名(~S)&quot;, _
-		&quot;请选择判断重复的列（按住Ctrl键可以多选）(~P)：&quot;, _
+		&quot;请选择判断重复的列（按住 Ctrl 键可以多选）(~P)：&quot;, _
 		&quot;确定(~O)&quot;, _
 		&quot;取消(~C)&quot;)
 End Sub
+
+Sub load_zh_TW
+	stringLists() = array(&quot;不支援多重選取&quot;, _
+		&quot;請選擇一個範圍&quot;, _
+		&quot;欄 &quot;, _
+		&quot;全部選取(~A)&quot;, _
+		&quot;選取區域包含了題名(~S)&quot;, _
+		&quot;請選擇判斷重複的欄（按住 Ctrl 鍵可多重選取）(~P)：&quot;, _
+		&quot;確定(~O)&quot;, _
+		&quot;取消(~C)&quot;)
+End Sub
+
 </script:module>

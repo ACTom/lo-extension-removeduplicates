@@ -18,7 +18,8 @@
 					</prop>
 					<prop oor:name="Title" oor:type="xs:string">
 						<value xml:lang="en-US">Remove Duplicates...</value>
-                        <value xml:lang="zh_CN">删除重复项...</value>
+                        			<value xml:lang="zh_CN">删除重复项...</value>
+						<value xml:lang="zh_TW">移除重複項...</value>
 					</prop>
 					<prop oor:name="Target" oor:type="xs:string">
 						<value>_self</value>
@@ -51,6 +52,7 @@
 							<prop oor:name="Title" oor:type="xs:string">
 								<value xml:lang="en-US">Remove Duplicates...</value>
 								<value xml:lang="zh_CN">删除重复项...</value>
+								<value xml:lang="zh_TW">移除重複項...</value>
 							</prop>     
 						</node>
 					</node>
@@ -68,7 +70,8 @@
 					</prop>				
 					<prop oor:name="Title" oor:type="xs:string">
 						<value xml:lang="en-US">Remove Duplicates...</value>
-                        <value xml:lang="zh_CN">删除重复项...</value>
+                        			<value xml:lang="zh_CN">删除重复项...</value>
+						<value xml:lang="zh_TW">移除重複項...</value>
 					</prop>
 					<prop oor:name="ImageIdentifier" oor:type="xs:string">
 						<value>%origin%/icons/image1</value>
